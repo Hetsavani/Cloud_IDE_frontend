@@ -1,0 +1,9 @@
+.playground{
+    display: flex;
+    flex-direction: column;
+}
+.Editor-container{
+    /* min-height: 60vh; */
+    /* height: 70vh; */
+    display: flex;    
+}

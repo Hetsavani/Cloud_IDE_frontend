@@ -1,0 +1,104 @@
+import { Terminal as XTerminal } from "@xterm/xterm";
+import { useEffect, useRef, useState } from "react";
+import "@xterm/xterm/css/xterm.css";
+import socket from "./Socket";
+function Terminal() {
+  const terminalRef = useRef();
+  const basePath = "PS D:\\Projects\\Cloud IDE\\Users\\";
+  // const [command, setCommand] = useState("");
+  var commandBuffer = ""
+  useEffect(() => {
+    const term = new XTerminal({
+      rows: 40,
+      cols: 100,
+    });
+    term.open(terminalRef.current);
+    // term.onData((data) => {
+    //   socket.emit("terminal:write", data);
+    //   console.log(data);
+    // });
+    // term.onData((data) => {
+    //   if (data === "\r") { // Enter key pressed
+    //     socket.emit("terminal:write", commandBuffer); // Emit the command buffer
+    //     setCommandBuffer(""); // Clear buffer after sending
+    //   } else {
+    //     setCommandBuffer((prevBuffer) => prevBuffer + data); // Accumulate characters correctly
+    //     console.log(commandBuffer); // This will now show updated content on each key press
+    //   }
+    // });
+    const formatPath = (fullPath) => {
+      const basePath = "PS D:\\Projects\\Cloud IDE\\Users";
+      // console.log(fullPath+" :::")
+      if (fullPath.includes(basePath+'>')) {
+        // return fullPath.slice(3); // Replace base path with ~ and keep the backslash
+        return fullPath.replace(basePath, "~\\"); // Replace base path with ~ and keep the backslash
+      }else if(fullPath.includes(basePath)){
+        return fullPath.replace(basePath, "~"); // Replace base path with ~ and keep the backslash
+      }
+      return fullPath;
+    };
+
+
+    term.onData((data) => {
+//       console.log("Received data:", data, "CharCode:", data.charCodeAt(0)); // Debug the exact character received
+ 
+//  // Check for both \r and \n (different types of line endings)
+//  if (data === "\r" || data === "\n" || data.charCodeAt(0) === 13 || data.charCodeAt(0) === 10) {
+
+      console.log(data);
+      if (data === "\r") { // Enter key pressed
+        // if(commandBuffer.equals("cls")){
+        //   term.clear();
+        //   term.write("\b \b\b \b\b \b");
+        //   commandBuffer = "";
+        //   console.log("point 1 "+commandBuffer)
+
+        // }
+        // else{
+
+        console.log("Before emit - commandBuffer:", commandBuffer); // Debug log
+        socket.emit("terminal:write", commandBuffer); // Emit the command buffer
+        console.log("After emit - commandBuffer:", commandBuffer); // Debug log
+        commandBuffer = ""; // Clear buffer after sending
+        console.log("After clear - commandBuffer:", commandBuffer); // Debug log
+        term.write(commandBuffer)
+          // socket.emit("terminal:write", commandBuffer); // Emit the command buffer
+          // console.log("point 2 "+commandBuffer)
+          // commandBuffer = ""; // Clear buffer after sending
+        // }
+      } else if (data === "\x7f") { // Backspace character
+        if (commandBuffer.length > 0) {
+          // Remove last character from command buffer
+          commandBuffer = commandBuffer.slice(0, -1);
+          // console.log("Backspace character")
+          // Move cursor back, overwrite with space, and move cursor back again
+          term.write("\b \b");
+        }
+      } else {
+        commandBuffer += data; // Accumulate characters
+        // setCommand(commandBuffer);
+        term.write(commandBuffer.charAt(commandBuffer.length - 1));
+        console.log(commandBuffer); // This should show the accumulated buffer
+      }
+    });
+
+    socket.on("terminal:output", data => {
+      var output = data.trim(); // Remove any trailing spaces or newlines
+      // term.write("\r\n" + output); 
+      if (output.includes("D:\\Projects\\Cloud IDE\\Users")) {
+        console.log(output)
+        output = formatPath(output); // Format paths in the output
+        console.log(output)
+      }
+      term.write("\r\n" + output);
+      // term.write(data)
+    });
+    
+  }, []);
+  return (
+    <>
+      <div ref={terminalRef} id="terminal" />
+    </>
+  );
+}
+export default Terminal;

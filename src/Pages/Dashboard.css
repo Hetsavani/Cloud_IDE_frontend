@@ -1,0 +1,35 @@
+CodeVortex-specific global styles
+.cv-dark {
+    color-scheme: dark;
+  }
+  
+  /* CodeVortex theme variables */
+  :root {
+    --cv-background: 0 0% 100%;
+    --cv-foreground: 0 0% 3.9%;
+    --cv-primary: 0 0% 9%;
+    --cv-primary-foreground: 0 0% 98%;
+    --cv-secondary: 0 0% 96.1%;
+    --cv-secondary-foreground: 0 0% 9%;
+    --cv-muted: 0 0% 96.1%;
+    --cv-muted-foreground: 0 0% 45.1%;
+    --cv-accent: 0 0% 96.1%;
+    --cv-accent-foreground: 0 0% 9%;
+  }
+  
+  .cv-dark {
+    --cv-background: 0 0% 3.9%;
+    --cv-foreground: 0 0% 98%;
+    --cv-primary: 0 0% 98%;
+    --cv-primary-foreground: 0 0% 9%;
+    --cv-secondary: 0 0% 14.9%;
+    --cv-secondary-foreground: 0 0% 98%;
+    --cv-muted: 0 0% 14.9%;
+    --cv-muted-foreground: 0 0% 63.9%;
+    --cv-accent: 0 0% 14.9%;
+    --cv-accent-foreground: 0 0% 98%;
+  }
+  
+  /* Add any other global styles needed for CodeVortex components */
+  
+  
