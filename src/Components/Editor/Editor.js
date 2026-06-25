@@ -8,9 +8,9 @@ import {
 import { Editor, MonacoEditor } from "@monaco-editor/react";
 import socket from "../../Socket";
 import { useEffect, useCallback, useState } from "react";
+import { API_BASE_URL } from "../../config";
 import "./Editor.css";
 import { languages } from "prismjs";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { FiCode, FiUpload } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { Loader2, Moon, Sun } from "lucide-react";
@@ -88,7 +88,7 @@ function CodeEditor() {
   const saveFile = useCallback(() => {
     const currentPath = sessionStorage.getItem("currentPath");
     if (currentPath && code) {
-      fetch(`https://cloude-ide-backend.onrender.com/api/files/${currentPath}/content`, {
+      fetch(`${API_BASE_URL}/api/files/${currentPath}/content`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -243,8 +243,7 @@ function CodeEditor() {
     var input = inputVal.replace(/\n/g, "\\n");
     // console.log(activeTab)
     var filename = activeTab;
-    fetch(`https://cloude-ide-backend.onrender.com/api/execute/run`, {
-      // fetch(`https://cloude-ide-backend.onrender.com/api/execute/run`, {
+    fetch(`${API_BASE_URL}/api/execute/run`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -272,7 +271,7 @@ function CodeEditor() {
     var input = inputVal.replace(/\n/g, "\\n");
     // console.log(activeTab)
     var filename = activeTab;
-    fetch(`https://cloude-ide-backend.onrender.com/api/execute/run`, {
+    fetch(`${API_BASE_URL}/api/execute/run`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -294,18 +293,6 @@ function CodeEditor() {
       });
     // socket.emit("run", activeTab)
     setIsLoading(false);
-  };
-
-  const genAI = new GoogleGenerativeAI(
-    "AIzaSyAwAaEi7VzGzTXXdmYPfOWCJgG6XvIquQ0"
-  );
-
-  const generationConfig = {
-    temperature: 1,
-    topP: 0.95,
-    topK: 64,
-    maxOutputTokens: 8192,
-    responseMimeType: "text/plain",
   };
 
   const handleImageUpload = async (event) => {
@@ -331,46 +318,25 @@ function CodeEditor() {
     setError("");
 
     try {
-      // Convert the image to a format suitable for Gemini
       const reader = new FileReader();
       reader.readAsDataURL(image);
       reader.onload = async () => {
-        const base64Image = reader.result.split(",")[1]; // Extract base64 data
-
-        // Initialize the Gemini model
-        const model = genAI.getGenerativeModel({
-          model: "gemini-1.5-flash",
-          generationConfig,
+        const base64Image = reader.result.split(",")[1];
+        console.log("Calling OCR API");
+        const response = await fetch(`${API_BASE_URL}/api/ocr/extract-code`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: base64Image, mimeType: image.type }),
         });
 
-        // Send the image to Gemini
-        const result = await model.generateContent([
-          {
-            // text: "Extract the code from this image. and with proper tabs",
-            text: `Extract the code from this image. and with proper tabs
-             also make it syntactically correctand in runnable form as per the language 
-             and note you should not have to change any logic even if it is wrong`,
-          },
-          {
-            inlineData: {
-              mimeType: image.type,
-              data: base64Image,
-            },
-          },
-        ]);
+        const data = await response.json();
+        const text = data.text;
 
-        // Extract the response
-        const response = await result.response;
-        const text = response.text();
-
-        // Set the extracted code
         setImageCode(text);
-        const lines = text.trim().split("\n"); // Use the correct variable
+        const lines = text.trim().split("\n");
         setlanguage(lines[0].slice(3, lines[0].length));
         console.log(lines);
         setImageCode(lines.slice(1, -1).join("\r\n"));
-        // console.log(language);
-        // setIsLoading(false)
         setLoading(false);
       };
     } catch (err) {

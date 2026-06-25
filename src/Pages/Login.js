@@ -6,6 +6,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 // Initialize Firebase (replace with your config)
 const firebaseConfig = {
@@ -101,7 +102,7 @@ const Login = () => {
     setError("");
     try {
       // const response = await fetch('http://localhost:3001/api/auth/login', {
-      const response = await fetch("https://cloude-ide-backend.onrender.com/api/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -147,7 +148,7 @@ const Login = () => {
     setIsLoading(true);
     setError("");
     try {
-      const response = await fetch("https://cloude-ide-backend.onrender.com/api/auth/register", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -226,7 +227,7 @@ const Login = () => {
       const idToken = await user.getIdToken(); // Firebase token
   
       // Send Firebase ID token to backend for JWT
-      const response = await fetch("https://cloude-ide-backend.onrender.com/api/auth/google-login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/google-login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

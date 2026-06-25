@@ -14,6 +14,7 @@ import {
 import socket from "../../Socket";
 import { useDispatch } from "react-redux";
 import { openFile } from "../../redux/ideslice";
+import { API_BASE_URL } from "../../config";
 
 export default function Files() {
   const [tree, setTree] = useState(null);
@@ -37,7 +38,7 @@ export default function Files() {
       console.log("Fetching file tree...");
       const token = await localStorage.getItem("token");
       // const response = await fetch('http://localhost:3010/files');
-      const response = await fetch("https://cloude-ide-backend.onrender.com/api/files/get-tree", {
+      const response = await fetch(`${API_BASE_URL}/api/files/get-tree`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`, // If authentication is required
@@ -99,7 +100,7 @@ export default function Files() {
     const folderName = prompt("Enter folder name:");
     if (folderName) {
       try {
-        const response = await fetch("https://cloude-ide-backend.onrender.com/api/files/folder", {
+        const response = await fetch(`${API_BASE_URL}/api/files/folder`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -134,7 +135,7 @@ export default function Files() {
     const fileName = prompt("Enter file name:");
     if (fileName) {
       try {
-        const response = await fetch("https://cloude-ide-backend.onrender.com/api/files/create", {
+        const response = await fetch(`${API_BASE_URL}/api/files/create`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -166,7 +167,7 @@ export default function Files() {
   const handleFileDelete = async () => {
     // console.log(`http://localhost:5000/api/files/fileDelete/${currentPath}`);
     const res = await fetch(
-      `https://cloude-ide-backend.onrender.com/api/files/file/${currentPath}`,
+      `${API_BASE_URL}/api/files/file/${currentPath}`,
       {
         method: "DELETE",
         headers: {
@@ -184,7 +185,7 @@ export default function Files() {
   const handleFolderDelete = async () => {
     // console.log(`http://localhost:5000/api/files/fileDelete/${currentPath}`);
     const res = await fetch(
-      `https://cloude-ide-backend.onrender.com/api/files/folder/${currentPath}`,
+      `${API_BASE_URL}/api/files/folder/${currentPath}`,
       {
         method: "DELETE",
         headers: {
@@ -368,7 +369,7 @@ export default function Files() {
         setCurrentPath(currentPath);
         sessionStorage.setItem("currentPath", currentPath);
         // fetch(`http://localhost:3010/file-data?path=${currentPath}`)
-        fetch(`https://cloude-ide-backend.onrender.com/api/files/${currentPath}/content`, {
+        fetch(`${API_BASE_URL}/api/files/${currentPath}/content`, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
