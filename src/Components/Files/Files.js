@@ -153,11 +153,7 @@ export default function Files() {
         if (!response.ok) {
           throw new Error("Failed to create file");
         }
-        // console.log(currentPath+" current path")
-        // console.log(currentPath+" current path");
-
-        // var dot = currentPath.length == 0 ? "." : "";
-        // socket.emit("file:create", { path: dot + currentPath, name: fileName });
+        
         fetchTree();
       } catch (err) {
         console.error("Error creating file:", err);
@@ -183,7 +179,6 @@ export default function Files() {
     }
   };
   const handleFolderDelete = async () => {
-    // console.log(`http://localhost:5000/api/files/fileDelete/${currentPath}`);
     const res = await fetch(
       `${API_BASE_URL}/api/files/folder/${currentPath}`,
       {
@@ -214,11 +209,6 @@ export default function Files() {
     // Fetch folder contents
     socket.emit("folder:read", path);
   };
-
-  // useEffect(()=>{
-  //   setTheme(localStorage.getItem("editorTheme"))
-  //   console.log(theme)
-  // },[currentPath])
 
   useEffect(() => {
     const updateTheme = () => {
@@ -256,25 +246,6 @@ export default function Files() {
         className="w-100 bg-gray-100 p-4 overflow-auto"
         style={{ height: "95.6%",backgroundColor: theme==="vs-dark" ? "#3c3c3c" : "transparent",color: theme==="vs-dark" ? "white" : "black" }}
       >
-        {/* <h2 className="text-xl font-semibold mb-4">File Manager</h2>
-      <div className="flex space-x-2 mb-4">
-        <button
-          onClick={createNewFolder}
-          className="flex items-center px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-          aria-label="Create new folder"
-        >
-          <FolderIcon className="w-4 h-4 mr-1" />
-          New Folder
-        </button>
-        <button
-          onClick={createNewFile}
-          className="flex items-center px-2 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-          aria-label="Create new file"
-        >
-          <FileTextIcon className="w-4 h-4 mr-1" />
-          New File
-        </button>
-      </div> */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">File Manager</h2>
           <div className="flex space-x-1">
@@ -459,69 +430,4 @@ export default function Files() {
       </li>
     );
   }
-
-  // function FileTreeItem({ name, value, level, path, setCurrentPath }) {
-  //   const [isOpen, setIsOpen] = useState(false);
-  //   const isFolder = value !== null && typeof value === "object";
-  //   const currentPath = path ? `${path}/${name}` : name;
-
-  //   const handleClick = () => {
-  //     if (isFolder) {
-  //       setIsOpen(!isOpen);
-  //       setCurrentPath(currentPath);
-  //       console.log(currentPath);
-  //     }else{
-  //       setCurrentPath(currentPath);
-  //       console.log(currentPath);
-  //       sessionStorage.setItem("currentPath", currentPath);
-  //       fetch(`http://localhost:3010/file-data?path=${currentPath}`)
-  //       .then(res => res.json())
-  //       .then(data => {
-  //         console.log(data);
-  //         // const { data: fileContent, code } = data;
-  //         // dispatch(openFile({ path, code: data.data || "" }));
-  //         dispatch(openFile({ name: name,content:data.data || "", path: currentPath }));
-  //       });
-  //     }
-  //   };
-
-  //   return (
-  //     <li
-  //       className="my-1"
-  //       role="treeitem"
-  //       aria-expanded={isFolder && isOpen}
-  //     >
-  //       <div
-  //         className={`flex items-center space-x-2 p-1 rounded hover:bg-gray-200 cursor-pointer ${
-  //           isFolder && isOpen ? "bg-gray-200" : ""
-  //         }`}
-  //         onClick={handleClick}
-  //         onKeyDown={(e) => {
-  //           if (e.key === "Enter" || e.key === " ") {
-  //             e.preventDefault();
-  //             handleClick();
-  //           }
-  //         }}
-  //         tabIndex={0}
-  //       >
-  //         {isFolder ? (
-  //           isOpen ? (
-  //             <ChevronDownIcon className="w-4 h-4 text-gray-500" aria-hidden="true" />
-  //           ) : (
-  //             <ChevronRightIcon className="w-4 h-4 text-gray-500" aria-hidden="true" />
-  //           )
-  //         ) : (
-  //           <span className="w-4" />
-  //         )}
-  //         {isFolder ? (
-  //           <FolderIcon className="w-5 h-5 text-yellow-500" aria-hidden="true" />
-  //         ) : (
-  //           <FileIcon className="w-5 h-5 text-blue-500" aria-hidden="true" />
-  //         )}
-  //         <span className="text-sm">{name}</span>
-  //       </div>
-  //       {isFolder && isOpen && <FileTree tree={value} level={level + 1} path={currentPath} setCurrentPath={setCurrentPath} />}
-  //     </li>
-  //   );
-  // }
 }

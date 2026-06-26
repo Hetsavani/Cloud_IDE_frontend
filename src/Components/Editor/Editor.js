@@ -38,9 +38,6 @@ function CodeEditor() {
   const [fileName, setFileName] = useState(null);
   const [isCodeEditorOpen, setIsCodeEditorOpen] = useState(false);
   const [name, setName] = useState("");
-  // useEffect(() => {
-  //   setTheme(localStorage.getItem("editorTheme") || "vs-light");
-  // }, []);
 
   // Redux state
   const tabs = useSelector((state) => state.ide.tabs);
@@ -57,14 +54,6 @@ function CodeEditor() {
   }, []);
   // Fetch file content for active tab
   useEffect(() => {
-    if (path && !tabs.find((tab) => tab.path === path)) {
-      // fetch(`http://localhost:3010/file-data?path=${path}`)
-      //   .then(res => res.json())
-      //   .then(data => {
-      //     const { data: fileContent, code } = data;
-      //     dispatch(openFile({ path, code: fileContent || code || "" }));
-      //   });
-    }
     setCode(
       tabs.find((tab) => tab.path === sessionStorage.getItem("currentPath"))
         ?.content || ""
@@ -148,8 +137,6 @@ function CodeEditor() {
     setRemovingTab(tabPath);
     console.log(tabs);
     // Save before closing
-    // if (tabPath === activeTab) {
-    // }
     saveFile();
 
     setTimeout(() => {
@@ -175,21 +162,7 @@ function CodeEditor() {
       setRemovingTab(null);
     }, 300);
   };
-  // const handleThemeChange = (e) => {
-  //   // const temp = localStorage.getItem('editorTheme');
-  //   var isDark = e.target.checked;
-  //   // if(temp === "vs-dark"){
-  //   // isDark = true;
-  //   // e.target.setAttribute('checked', 'checked');
-  //   // }else{
-  //   // isDark = e.target.checked;
-  //   // }
-  //   setTheme(e.target.checked ? "vs-dark" : "vs-light")
-  //   // const newTheme = isDark ? "vs-dark" : "vs-light";
-  //   // setTheme(newTheme);
-  //   console.log(theme)
-  //   localStorage.setItem("editorTheme", theme);
-  // };
+
   useEffect(() => {
     console.log("Current theme:", theme);
   }, [theme]);
@@ -206,16 +179,6 @@ function CodeEditor() {
     [theme]
   );
 
-  // Handle tab click
-  // const handleTabClick = (tabPath) => {
-  //   dispatch(setActiveFile(tabPath));
-  //   console.log(tabs);
-  //   console.log("Active file: " + activeTab);
-  //   sessionStorage.setItem("currentPath", activeTab);
-  //   setCode(tabs.find((tab) => tab.path === tabPath)?.content || "");
-  //   console.log("tabPath file: " + tabPath);
-  //   console.log(code)
-  // };
   const handleTabClick = (tabPath) => {
     // Update the active tab in the Redux store
     dispatch(setActiveFile(tabPath));
@@ -238,8 +201,6 @@ function CodeEditor() {
   };
 
   const handleRunButton = () => {
-    // console.log(inputVal)
-    //  setinputVal(inputVal.replace(/\n/g, "\\n"))
     var input = inputVal.replace(/\n/g, "\\n");
     // console.log(activeTab)
     var filename = activeTab;
@@ -394,16 +355,6 @@ function CodeEditor() {
             </span>
           </span>
         </label>
-        {/* <Sun className="small" style={{ width: "1rem", height: "1rem" }} />
-        <div className="form-check form-switch">
-          <input
-            className="form-check-input"
-            type="checkbox"
-            // checked={}
-            onChange={handleThemeChange}
-          />
-        </div>
-        <Moon className="small" style={{ width: "1rem", height: "1rem" }} /> */}
       </div>
       <div
         onClick={handleRunButton}
@@ -482,18 +433,6 @@ function CodeEditor() {
           }}
           // theme={isDark? "vs-dark": "vs-light"}
         />
-        {/* <MonacoEditor
-          height="400px"
-          width="100%"
-          theme={theme}
-          language={language}
-          value={code}
-          options={{
-            selectOnLineNumbers: true,
-            automaticLayout: true,
-          }}
-          onChange={handleCodeChange}
-        /> */}
       </div>
 
       <div className="io-containers">
@@ -744,161 +683,3 @@ function CodeEditor() {
 }
 
 export default CodeEditor;
-// import AceEditor from "react-ace";
-// // import Editor from 'react-simple-code-editor';
-// import { highlight, languages } from 'prismjs/components/prism-core';
-// import 'prismjs/components/prism-clike';
-// import 'prismjs/components/prism-javascript';
-// import 'prismjs/themes/prism.css';
-
-// import Editor from '@monaco-editor/react';
-
-// import "ace-builds/src-noconflict/mode-java";
-// // import "ace-builds/src-noconflict/mode-python";
-// // import "ace-builds/src-noconflict/mode-html";
-// // import "ace-builds/src-noconflict/mode-css";
-// // import "ace-builds/src-noconflict/mode-typescript";
-// import "ace-builds/src-noconflict/theme-github";
-// import "ace-builds/src-noconflict/theme-monokai";
-// // import "ace-builds/src-noconflict/theme-tomorrow";
-
-// import "ace-builds/src-noconflict/ext-language_tools";
-// // import "ace-builds/src-noconflict/ext-searchbox";
-// import { useState, useEffect, useCallback } from "react";
-// import socket from "./Socket";
-// import "./Editor.css";
-
-// function CodeEditor() {
-//   const [path, setPath] = useState(sessionStorage.getItem("currentPath"));
-//   const [code, setCode] = useState(" ");
-//   const [fileContent, setFileContent] = useState("");
-//   const isSaved = fileContent === code;
-//   const [tabs, setTabs] = useState([]);
-//   const [activeTab, setActiveTab] = useState(null);
-
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       const currentPath = sessionStorage.getItem("currentPath");
-//       if (currentPath !== path) {
-//         setPath(currentPath);
-
-//       }
-//     }, 1000); // Check every 500ms or any suitable interval
-//     // console.log(path);
-//     getFileData()
-
-//     return () => clearInterval(interval); // Clean up on unmount
-//   }, [path]);
-
-//   useEffect(()=>{
-//   },[path])
-
-//   const saveFileData = useCallback(() => {
-//     if (!path || !code) return;
-//     socket.emit("file-data:update", { path, code });
-//     setFileContent(code);
-//     console.log("File saved:", code);
-//   }, [path, code]);
-
-//   useEffect(()=>{
-//     if(!isSaved && code){
-//         const time = setTimeout(()=>{
-//             socket.emit("file-data:update", {path, code})
-//             setFileContent(code)
-//             console.log(code)
-//         },5000)
-//         return ()=>clearTimeout(time)
-//     }
-//     // socket.emit("file:read", path, (data)=>{
-//     //   setCode(data)
-//     // })
-//   },[code, isSaved, fileContent])
-
-// useEffect(() => {
-//   const handleKeyDown = (e) => {
-//     if ((e.ctrlKey || e.metaKey) && e.key === "s") {
-//       e.preventDefault(); // Prevent browser's default save dialog
-//       saveFileData();
-//     }
-//   };
-
-//   window.addEventListener("keydown", handleKeyDown);
-//   return () => window.removeEventListener("keydown", handleKeyDown);
-// }, [saveFileData]);
-
-//   useEffect(()=>{
-//     if(path && fileContent){
-//       setCode(fileContent)
-//     }
-//   },[path, fileContent])
-
-//   const getFileData = useCallback (()=>{
-//     if(!path) return;
-//     const data = fetch(`http://localhost:3010/file-data?path=${path}`)
-//     .then(res=>res.json())
-//     .then(data=>{
-//         // console.log(data)
-//         setFileContent(data.data)
-//         setCode(data.code)
-//     })
-//   },[path])
-
-//   useEffect(() => {
-//     if (path && !tabs.find(tab => tab.path === path)) {
-//       setTabs(prev => [...prev, { path, code: code }]);
-//       setActiveTab(path);
-//     }
-//   }, [path]);
-
-//   const handleCloseTab = (tabPath, e) => {
-//     e.stopPropagation();
-//     const newTabs = tabs.filter(tab => tab.path !== tabPath);
-//     setTabs(newTabs);
-//     if (activeTab === tabPath) {
-//       setActiveTab(newTabs[newTabs.length - 1]?.path || null);
-//       setPath(newTabs[newTabs.length - 1]?.path || null);
-//     }
-//   };
-
-//   const handleTabClick = (tabPath) => {
-//     setActiveTab(tabPath);
-//     setPath(tabPath);
-//   };
-
-//   return (
-//     <>
-//       <div>{path ? path.replaceAll('/', ' > ') : ""}{isSaved ? "" : "*"}</div>
-
-//       <div className="tabs-container">
-//         {tabs.map(tab => (
-//           <div
-//             key={tab.path}
-//             className={`tab ${activeTab === tab.path ? 'active' : ''}`}
-//             onClick={() => handleTabClick(tab.path)}
-//           >
-//             <span className="tab-name">{tab.path.split('/').pop()}</span>
-//             <span
-//               className="tab-close"
-//               onClick={(e) => handleCloseTab(tab.path, e)}
-//             >
-//               x
-//             </span>
-//           </div>
-//         ))}
-//       </div>
-
-//       <div className="editor">
-//         <Editor
-//           height="600px"
-//           width={"1120px"}
-//           defaultLanguage="java"
-//           defaultValue={code}
-//           value={code}
-//           onChange={code => setCode(code)}
-//           theme="vs-dark"
-//         />
-//       </div>
-//     </>
-//   );
-// }
-// export default CodeEditor;
